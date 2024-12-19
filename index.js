@@ -31,12 +31,14 @@ async function run() {
     );
 
     // ***************************code write here***************************
-    const database = client.db("karma-ecommerce");
+    const database = client.db("penguin-ecommerce");
     const bannerCollection = database.collection("banner");
     const imgageCategoryCollection = database.collection("image-category");
+    const productsCollection = database.collection('products')
 
     const { ObjectId } = require("mongodb"); // Ensure ObjectId is imported
 
+    // banner post 
     app.post("/banner", async (req, res) => {
       const { _id, prod_id, prod_img, title1, title2, title_details } = req.body;
       const data = {
@@ -70,16 +72,17 @@ async function run() {
           if (result.matchedCount === 0) {
             return res.status(404).send({ error: "Banner not found" });
           }
-          res.send(result);
+          res.status(201).send({message: 'Update Successful', id: result.modifiedCount});
         } else {
           const result = await bannerCollection.insertOne(data);
-          res.status(201).send(result);
+          res.status(201).send({message: 'Successful', id: result.insertedId});
         }
       } catch (error) {
         res.status(500).send({ error: "Failed to create or update Banner" });
       }
     });
 
+    // category image post 
     app.post('/image-category', async(req, res) => {
       const {_id, cat_id, cat_img, cat_name} = req.body;
 
@@ -106,19 +109,149 @@ async function run() {
         if(result.matchedCount === 0) {
           return res.status(404).send({error: "Category not found"});
         }
-        res.send(result)
+        res.status(201).send({message: 'Update Successful', id: result.modifiedCount})
         }
         else {
           const result = await imgageCategoryCollection.insertOne(data);
-          res.status(201).send(result);
+          res.status(201).send({message: 'Successful', id: result.insertedId});
         }
       }
       catch(error) {
         res.status(500).send({ error: "Failed to create or update image category" });
       }
-    })
-    
+    });
 
+    // products post 
+    app.post('/products', async(req, res) => {
+      const {
+        _id,
+        parent_cat_id,
+        sub_cat_id, 
+        sub_sub_cat_id,
+        sub_sub_sub_cat_id,
+        prod_id, 
+        prod_image,
+        prod_name,
+        price,
+        prod_type,
+        rating,
+        stock,
+        prod_brand,
+        description,
+        currency_id,
+        currency_name,
+        status
+      } = req.body;
+
+      const data = {
+        parent_cat_id: typeof parent_cat_id === 'number' ? parent_cat_id : null,
+        sub_cat_id: typeof sub_cat_id === 'number' ? sub_cat_id : null,
+        sub_sub_cat_id: typeof sub_sub_cat_id === 'number' ? sub_sub_cat_id : null,
+        sub_sub_sub_cat_id: typeof sub_sub_sub_cat_id === 'number' ? sub_sub_sub_cat_id : null,
+        prod_id: typeof prod_id === 'number' ? prod_id : null,
+        prod_image: typeof prod_image === 'string' ? prod_image : null,
+        prod_name: typeof prod_name === 'string' ? prod_name : null,
+        price: typeof price === 'number' ? price : null,
+        prod_type: typeof prod_type === 'string' ? prod_type : null,
+        stock: typeof stock === 'number' ? stock : null,
+        currency_id: typeof currency_id === 'number' ? currency_id : null,
+        rating: typeof rating === 'number' ? rating : null,
+        currency_name: typeof currency_name === 'string' ? currency_name : null,
+        description: typeof description === 'string' ? description : null,
+        prod_brand: typeof prod_brand === 'string' ? prod_brand : null,
+        status: typeof status === 'number' ? status : null,
+      };
+
+      if(
+        parent_cat_id === null ||
+        prod_id === null ||
+        prod_image === null ||
+        prod_name === null ||
+        price === null ||
+        prod_type === null ||
+        stock === null ||
+        currency_id === null ||
+        currency_name === null ||
+        status === null
+      ) {
+        return res.status(404).send({error: 'Invalid or missing required fields'})
+      }
+      try {
+        if(_id) {
+          const updateDocId = new ObjectId(_id);
+          const result = await productsCollection.updateOne(
+            {
+              _id : updateDocId
+            },
+            {
+              $set: data
+            }
+          );
+          if(result.modifiedCount === 0) {
+            return res.status(400).send({error: "Product not found"})
+          }
+          res.status(201).send({message: 'Update Successful', id: result.modifiedCount});
+        }
+        else {
+          const result = await productsCollection.insertOne(data);
+          res.status(201).send({message: 'Successful', id: result.insertedId});
+        }
+      }
+      catch(error) {
+        res.status(500).send({error: 'Failed to create or update image category'})
+      }
+    });
+
+    // all get api code write here 
+    
+    // get  banner data 
+    app.get('/banner', async (req, res) => {
+      try{
+        const getBanner = bannerCollection.find();
+        const result = await getBanner.toArray();
+        res.send(
+          {
+            data_list: result, 
+            message: 'Successful'
+          });
+        
+      }
+      catch(error) {
+        res.status(404).send({error: 'Banner data can not fetch'})
+      }
+    });
+
+    app.get('/image-category', async (req, res) => {
+      try {
+        const getImageCategory = imgageCategoryCollection.find();
+        const result = await getImageCategory.toArray();
+        res.send(
+          {
+            data_list: result, 
+            message: 'Successful'
+          });
+      }
+      catch(error) {
+        res.status(404).send({error: 'Image category data can not fetch'})
+      }
+    });
+
+    app.get('/products', async (req, res) => {
+      try {
+        const getProducts = productsCollection.find();
+        const result = await getProducts.toArray();
+        res.send(
+          {
+            data_list: result, 
+            message: 'Successful'
+          });
+      }
+      catch(error) {
+        res.status(404).send({error: 'Products data can not fetch'});
+      }
+    });
+
+    
   } finally {
     // await client.close();
   }
