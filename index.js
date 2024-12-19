@@ -33,13 +33,12 @@ async function run() {
     // ***************************code write here***************************
     const database = client.db("karma-ecommerce");
     const bannerCollection = database.collection("banner");
+    const imgageCategoryCollection = database.collection("image-category");
 
     const { ObjectId } = require("mongodb"); // Ensure ObjectId is imported
 
     app.post("/banner", async (req, res) => {
       const { _id, prod_id, prod_img, title1, title2, title_details } = req.body;
-    
-      // Validate and construct data
       const data = {
         prod_id: typeof prod_id === "number" ? prod_id : null,
         prod_img: typeof prod_img === "string" && prod_img.trim() ? prod_img : null,
@@ -50,8 +49,6 @@ async function run() {
             ? title_details
             : null,
       };
-    
-      // Check for invalid or missing fields
       if (
         data.prod_id === null ||
         data.prod_img === null ||
@@ -61,14 +58,12 @@ async function run() {
       ) {
         return res.status(400).send({ error: "Invalid or missing required fields" });
       }
-    
       try {
         if (_id) {
-          // Update operation
-          const userId = new ObjectId(_id); // Convert to ObjectId
+          const updateDocId = new ObjectId(_id);
     
           const result = await bannerCollection.updateOne(
-            { _id: userId },
+            { _id: updateDocId },
             { $set: data }
           );
     
@@ -77,7 +72,6 @@ async function run() {
           }
           res.send(result);
         } else {
-          // Create operation
           const result = await bannerCollection.insertOne(data);
           res.status(201).send(result);
         }
@@ -85,6 +79,44 @@ async function run() {
         res.status(500).send({ error: "Failed to create or update Banner" });
       }
     });
+
+    app.post('/image-category', async(req, res) => {
+      const {_id, cat_id, cat_img, cat_name} = req.body;
+
+      const data = {
+        cat_id: typeof cat_id === 'number' ? cat_id : null,
+        cat_img: typeof cat_img === 'string' ? cat_img : null,
+        cat_name: typeof cat_name === 'string' ? cat_name : null
+      };
+
+      if(data.cat_id === null || data.cat_img === null || data.cat_name === null) {
+        return res.status(400).send({error: "Invalid or missing required fields"});
+      }
+      try {
+        if(_id) {
+          const updateDocId = new ObjectId(_id)
+          const result = await imgageCategoryCollection.updateOne(
+          {
+            _id: updateDocId
+          },
+          {
+            $set: data
+          }
+        );
+        if(result.matchedCount === 0) {
+          return res.status(404).send({error: "Category not found"});
+        }
+        res.send(result)
+        }
+        else {
+          const result = await imgageCategoryCollection.insertOne(data);
+          res.status(201).send(result);
+        }
+      }
+      catch(error) {
+        res.status(500).send({ error: "Failed to create or update image category" });
+      }
+    })
     
 
   } finally {
