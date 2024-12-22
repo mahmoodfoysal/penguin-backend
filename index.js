@@ -34,16 +34,19 @@ async function run() {
     const database = client.db("penguin-ecommerce");
     const bannerCollection = database.collection("banner");
     const imgageCategoryCollection = database.collection("image-category");
-    const productsCollection = database.collection('products')
+    const productsCollection = database.collection("products");
+    const adminCollection = database.collection("admin");
 
     const { ObjectId } = require("mongodb"); // Ensure ObjectId is imported
 
-    // banner post 
+    // banner post
     app.post("/banner", async (req, res) => {
-      const { _id, prod_id, prod_img, title1, title2, title_details } = req.body;
+      const { _id, prod_id, prod_img, title1, title2, title_details } =
+        req.body;
       const data = {
         prod_id: typeof prod_id === "number" ? prod_id : null,
-        prod_img: typeof prod_img === "string" && prod_img.trim() ? prod_img : null,
+        prod_img:
+          typeof prod_img === "string" && prod_img.trim() ? prod_img : null,
         title1: typeof title1 === "string" && title1.trim() ? title1 : null,
         title2: typeof title2 === "string" && title2.trim() ? title2 : null,
         title_details:
@@ -58,78 +61,94 @@ async function run() {
         data.title2 === null ||
         data.title_details === null
       ) {
-        return res.status(400).send({ error: "Invalid or missing required fields" });
+        return res
+          .status(400)
+          .send({ error: "Invalid or missing required fields" });
       }
       try {
         if (_id) {
           const updateDocId = new ObjectId(_id);
-    
+
           const result = await bannerCollection.updateOne(
             { _id: updateDocId },
             { $set: data }
           );
-    
+
           if (result.matchedCount === 0) {
-            return res.status(404).send({ error: "Banner not found" });
+            return res.status(404).send({ error: "No data modified" });
           }
-          res.status(201).send({message: 'Update Successful', id: result.modifiedCount});
+          res
+            .status(201)
+            .send({ message: "Update Successful", id: result.modifiedCount });
         } else {
           const result = await bannerCollection.insertOne(data);
-          res.status(201).send({message: 'Successful', id: result.insertedId});
+          res
+            .status(201)
+            .send({ message: "Successful", id: result.insertedId });
         }
       } catch (error) {
         res.status(500).send({ error: "Failed to create or update Banner" });
       }
     });
 
-    // category image post 
-    app.post('/image-category', async(req, res) => {
-      const {_id, cat_id, cat_img, cat_name} = req.body;
+    // category image post
+    app.post("/image-category", async (req, res) => {
+      const { _id, cat_id, cat_img, cat_name } = req.body;
 
       const data = {
-        cat_id: typeof cat_id === 'number' ? cat_id : null,
-        cat_img: typeof cat_img === 'string' ? cat_img : null,
-        cat_name: typeof cat_name === 'string' ? cat_name : null
+        cat_id: typeof cat_id === "number" ? cat_id : null,
+        cat_img: typeof cat_img === "string" ? cat_img : null,
+        cat_name: typeof cat_name === "string" ? cat_name : null,
       };
 
-      if(data.cat_id === null || data.cat_img === null || data.cat_name === null) {
-        return res.status(400).send({error: "Invalid or missing required fields"});
+      if (
+        data.cat_id === null ||
+        data.cat_img === null ||
+        data.cat_name === null
+      ) {
+        return res
+          .status(400)
+          .send({ error: "Invalid or missing required fields" });
       }
       try {
-        if(_id) {
-          const updateDocId = new ObjectId(_id)
+        if (_id) {
+          const updateDocId = new ObjectId(_id);
           const result = await imgageCategoryCollection.updateOne(
-          {
-            _id: updateDocId
-          },
-          {
-            $set: data
+            {
+              _id: updateDocId,
+            },
+            {
+              $set: data,
+            }
+          );
+          if (result.matchedCount === 0) {
+            return res.status(404).send({ error: "No data modified" });
           }
-        );
-        if(result.matchedCount === 0) {
-          return res.status(404).send({error: "Category not found"});
-        }
-        res.status(201).send({message: 'Update Successful', id: result.modifiedCount})
-        }
-        else {
+          res
+            .status(201)
+            .send({ message: "Update Successful", id: result.modifiedCount });
+        } else {
           const result = await imgageCategoryCollection.insertOne(data);
-          res.status(201).send({message: 'Successful', id: result.insertedId});
+          res
+            .status(201)
+            .send({ message: "Successful", id: result.insertedId });
         }
-      }
-      catch(error) {
-        res.status(500).send({ error: "Failed to create or update image category" });
+      } catch (error) {
+        res
+          .status(500)
+          .send({ error: "Failed to create or update image category" });
       }
     });
 
-    // products post 
-    app.post('/products', async(req, res) => {
+    // products post
+    app.post("/products", async (req, res) => {
       const {
         _id,
         parent_cat_id,
-        sub_cat_id, 
+        sub_cat_id,
         sub_sub_cat_id,
         sub_sub_sub_cat_id,
-        prod_id, 
+        prod_id,
         prod_image,
         prod_name,
         price,
@@ -140,29 +159,31 @@ async function run() {
         description,
         currency_id,
         currency_name,
-        status
+        status,
       } = req.body;
 
       const data = {
-        parent_cat_id: typeof parent_cat_id === 'number' ? parent_cat_id : null,
-        sub_cat_id: typeof sub_cat_id === 'number' ? sub_cat_id : null,
-        sub_sub_cat_id: typeof sub_sub_cat_id === 'number' ? sub_sub_cat_id : null,
-        sub_sub_sub_cat_id: typeof sub_sub_sub_cat_id === 'number' ? sub_sub_sub_cat_id : null,
-        prod_id: typeof prod_id === 'number' ? prod_id : null,
-        prod_image: typeof prod_image === 'string' ? prod_image : null,
-        prod_name: typeof prod_name === 'string' ? prod_name : null,
-        price: typeof price === 'number' ? price : null,
-        prod_type: typeof prod_type === 'string' ? prod_type : null,
-        stock: typeof stock === 'number' ? stock : null,
-        currency_id: typeof currency_id === 'number' ? currency_id : null,
-        rating: typeof rating === 'number' ? rating : null,
-        currency_name: typeof currency_name === 'string' ? currency_name : null,
-        description: typeof description === 'string' ? description : null,
-        prod_brand: typeof prod_brand === 'string' ? prod_brand : null,
-        status: typeof status === 'number' ? status : null,
+        parent_cat_id: typeof parent_cat_id === "number" ? parent_cat_id : null,
+        sub_cat_id: typeof sub_cat_id === "number" ? sub_cat_id : null,
+        sub_sub_cat_id:
+          typeof sub_sub_cat_id === "number" ? sub_sub_cat_id : null,
+        sub_sub_sub_cat_id:
+          typeof sub_sub_sub_cat_id === "number" ? sub_sub_sub_cat_id : null,
+        prod_id: typeof prod_id === "number" ? prod_id : null,
+        prod_image: typeof prod_image === "string" ? prod_image : null,
+        prod_name: typeof prod_name === "string" ? prod_name : null,
+        price: typeof price === "number" ? price : null,
+        prod_type: typeof prod_type === "string" ? prod_type : null,
+        stock: typeof stock === "number" ? stock : null,
+        currency_id: typeof currency_id === "number" ? currency_id : null,
+        rating: typeof rating === "number" ? rating : null,
+        currency_name: typeof currency_name === "string" ? currency_name : null,
+        description: typeof description === "string" ? description : null,
+        prod_brand: typeof prod_brand === "string" ? prod_brand : null,
+        status: typeof status === "number" ? status : null,
       };
 
-      if(
+      if (
         parent_cat_id === null ||
         prod_id === null ||
         prod_image === null ||
@@ -174,84 +195,134 @@ async function run() {
         currency_name === null ||
         status === null
       ) {
-        return res.status(404).send({error: 'Invalid or missing required fields'})
+        return res
+          .status(404)
+          .send({ error: "Invalid or missing required fields" });
       }
       try {
-        if(_id) {
+        if (_id) {
           const updateDocId = new ObjectId(_id);
           const result = await productsCollection.updateOne(
             {
-              _id : updateDocId
+              _id: updateDocId,
             },
             {
-              $set: data
+              $set: data,
             }
           );
-          if(result.modifiedCount === 0) {
-            return res.status(400).send({error: "Product not found"})
+          if (result.modifiedCount === 0) {
+            return res.status(400).send({ error: "No data modified" });
           }
-          res.status(201).send({message: 'Update Successful', id: result.modifiedCount});
-        }
-        else {
+          res
+            .status(201)
+            .send({ message: "Update Successful", id: result.modifiedCount });
+        } else {
           const result = await productsCollection.insertOne(data);
-          res.status(201).send({message: 'Successful', id: result.insertedId});
+          res
+            .status(201)
+            .send({ message: "Successful", id: result.insertedId });
         }
-      }
-      catch(error) {
-        res.status(500).send({error: 'Failed to create or update image category'})
+      } catch (error) {
+        res
+          .status(500)
+          .send({ error: "Failed to create or update image category" });
       }
     });
 
-    // all get api code write here 
-    
-    // get  banner data 
-    app.get('/banner', async (req, res) => {
-      try{
+    app.post("/admin", async (req, res) => {
+      const { _id, email, role, role_id } = req.body;
+
+      const data = {
+        email: typeof email === "string" ? email : null,
+        role: typeof role === "string" ? role : null,
+        role_id: typeof role_id === "number" ? role_id : null,
+      };
+      if (!email || !role || !role_id) {
+        return res
+          .status(404)
+          .send({ error: "Invalid or missing required fields" });
+      }
+      try {
+        if (_id) {
+          const adminId = new ObjectId(_id);
+          const result = await adminCollection.updateOne(
+            {
+              _id: adminId,
+            },
+            {
+              $set: data,
+            }
+          );
+          if (result.modifiedCount === 0) {
+            return res.status(400).send({ message: "No data modified" });
+          }
+          res
+            .status(201)
+            .send({ message: "Update Successful", id: result.modifiedCount });
+        } else {
+          const result = await adminCollection.insertOne(data);
+          res
+            .status(201)
+            .send({ message: "Successful", id: result.insertedId });
+        }
+      } catch (error) {
+        res.status(500).send({ error: "Failed to create or update admin" });
+      }
+    });
+
+    // all get api code write here
+
+    // get  banner data
+    app.get("/banner", async (req, res) => {
+      try {
         const getBanner = bannerCollection.find();
         const result = await getBanner.toArray();
-        res.send(
-          {
-            data_list: result, 
-            message: 'Successful'
-          });
-        
-      }
-      catch(error) {
-        res.status(404).send({error: 'Banner data can not fetch'})
+        res.send({
+          data_list: result,
+          message: "Successful",
+        });
+      } catch (error) {
+        res.status(404).send({ error: "Banner data can not fetch" });
       }
     });
 
-    app.get('/image-category', async (req, res) => {
+    app.get("/image-category", async (req, res) => {
       try {
         const getImageCategory = imgageCategoryCollection.find();
         const result = await getImageCategory.toArray();
-        res.send(
-          {
-            data_list: result, 
-            message: 'Successful'
-          });
-      }
-      catch(error) {
-        res.status(404).send({error: 'Image category data can not fetch'})
+        res.send({
+          data_list: result,
+          message: "Successful",
+        });
+      } catch (error) {
+        res.status(404).send({ error: "Image category data can not fetch" });
       }
     });
 
-    app.get('/products', async (req, res) => {
+    app.get("/products", async (req, res) => {
       try {
         const getProducts = productsCollection.find();
         const result = await getProducts.toArray();
-        res.send(
-          {
-            data_list: result, 
-            message: 'Successful'
-          });
-      }
-      catch(error) {
-        res.status(404).send({error: 'Products data can not fetch'});
+        res.send({
+          data_list: result,
+          message: "Successful",
+        });
+      } catch (error) {
+        res.status(404).send({ error: "Products data can not fetch" });
       }
     });
 
-    
+    // get admin
+    app.get("/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await adminCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === "Admin") {
+        isAdmin = true;
+      }
+      res.json({ admin: isAdmin, message: "Successful" });
+    });
   } finally {
     // await client.close();
   }
