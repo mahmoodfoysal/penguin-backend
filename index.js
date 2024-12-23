@@ -36,6 +36,7 @@ async function run() {
     const imgageCategoryCollection = database.collection("image-category");
     const productsCollection = database.collection("products");
     const adminCollection = database.collection("admin");
+    const menuCollection = database.collection("dashboard-menu");
 
     const { ObjectId } = require("mongodb"); // Ensure ObjectId is imported
 
@@ -278,7 +279,7 @@ async function run() {
         const getBanner = bannerCollection.find();
         const result = await getBanner.toArray();
         res.send({
-          data_list: result,
+          list_data: result,
           message: "Successful",
         });
       } catch (error) {
@@ -291,7 +292,7 @@ async function run() {
         const getImageCategory = imgageCategoryCollection.find();
         const result = await getImageCategory.toArray();
         res.send({
-          data_list: result,
+          list_data: result,
           message: "Successful",
         });
       } catch (error) {
@@ -304,11 +305,25 @@ async function run() {
         const getProducts = productsCollection.find();
         const result = await getProducts.toArray();
         res.send({
-          data_list: result,
+          list_data: result,
           message: "Successful",
         });
       } catch (error) {
         res.status(404).send({ error: "Products data can not fetch" });
+      }
+    });
+
+    app.get('/dashboard-menu', async(req, res) => {
+      try {
+        const getDashboardMenu = menuCollection.find();
+        const result = await getDashboardMenu.toArray();
+        res.send({
+          list_data: result,
+          message: "Successful"
+        })
+      }
+      catch (error) {
+        res.status(404).send({error: 'Menu can not found'});
       }
     });
 
@@ -323,6 +338,16 @@ async function run() {
       }
       res.json({ admin: isAdmin, message: "Successful" });
     });
+
+    // get admin 
+    app.get('/admin', async(req, res) => {
+      const getAdmin = adminCollection.find();
+      const result = await getAdmin.toArray();
+      res.send({
+        list_data: result,
+        message: 'Successful'
+      });
+    })
   } finally {
     // await client.close();
   }
