@@ -259,7 +259,7 @@ async function run() {
           }
           res
             .status(201)
-            .send({ message: "Update Successful", id: result.modifiedCount });
+            .send({ message: "Update Successful", id: _id });
         } else {
           const result = await adminCollection.insertOne(data);
           res
