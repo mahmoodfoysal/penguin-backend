@@ -7,13 +7,13 @@ const {
   Collection,
 } = require("mongodb");
 require("dotenv").config();
-const bannerRoutes = require('./banner.js');
-const imageCategoryRoute = require('./image-category.js');
-const productsRoute = require("./products.js");
-const adminRoute = require("./admin-controller.js");
-const parentCategoryRoute = require("./parent-category.js");
-const dashboardMenuRoute = require("./dashboard-menu.js");
-const subCategoryRoute = require("./sub-category.js");
+const bannerRoutes = require('./collections/banner.js');
+const imageCategoryRoute = require('./collections/image-category.js');
+const productsRoute = require("./collections/products.js");
+const adminRoute = require("./collections/admin-controller.js");
+const parentCategoryRoute = require("./collections/parent-category.js");
+const dashboardMenuRoute = require("./collections/dashboard-menu.js");
+const subCategoryRoute = require("./collections/sub-category.js");
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -50,27 +50,27 @@ async function run() {
     // ############################################ all database collection write here ########################################### 
 
     // ############################################ all collection route write here ########################################### 
-    
+
     // banner
-    app.use("/banner", bannerRoutes(bannerCollection));
+    app.use("/", bannerRoutes(bannerCollection));
 
     // image category 
-    app.use('/image-category', imageCategoryRoute(imgageCategoryCollection));
+    app.use('/', imageCategoryRoute(imgageCategoryCollection));
 
     // products 
-    app.use("/products", productsRoute(productsCollection));
+    app.use("/", productsRoute(productsCollection));
 
     // admin controller 
-    app.use('/admin', adminRoute(adminCollection));
+    app.use('/', adminRoute(adminCollection));
     
     // parent category 
-    app.use("/parent-category", parentCategoryRoute(parentCatCollection));
+    app.use("/", parentCategoryRoute(parentCatCollection));
 
     // dashboard menu 
-    app.use("/dashboard-menu", dashboardMenuRoute(menuCollection));
+    app.use("/", dashboardMenuRoute(menuCollection));
 
     // sub category 
-    app.use("/sub-category", subCategoryRoute(subCategoryCollection));
+    app.use("/", subCategoryRoute(subCategoryCollection));
 
     // ############################################ all collection route write here ########################################### 
 

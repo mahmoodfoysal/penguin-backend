@@ -5,7 +5,7 @@ const router = express.Router();
 const imageCategoryRoute = (imgageCategoryCollection) => {
   // get api
 
-  router.get("/", async (req, res) => {
+  router.get("/api/admin/get-image-category", async (req, res) => {
     try {
         const getImageCategory = imgageCategoryCollection.find();
         const result = await getImageCategory.toArray();
@@ -19,7 +19,7 @@ const imageCategoryRoute = (imgageCategoryCollection) => {
   });
 
   // POST API
-  router.post("/", async (req, res) => {
+  router.post("/api/admin/insert-update-image-category", async (req, res) => {
     const { _id, cat_id, cat_img, cat_name } = req.body;
 
     const data = {

@@ -3,7 +3,7 @@ const { ObjectId } = require("mongodb");
 const router = express.Router();
 
 const dashboardMenuRoute = (menuCollection) => {
-    router.get('/', async(req, res) => {
+    router.get('/api/admin/get-dashboard-menu', async(req, res) => {
         try {
           const getDashboardMenu = menuCollection.find();
           const result = await getDashboardMenu.toArray();

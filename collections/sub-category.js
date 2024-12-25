@@ -4,7 +4,7 @@ const router = express.Router();
 
 const subCategoryRoute = (subCategoryCollection) => {
     // get api 
-        router.get('/', async(req, res) => {
+        router.get('/api/admin/get-sub-category', async(req, res) => {
             const getSubCategory = subCategoryCollection.find();
             const result = await getSubCategory.toArray();
             res.send({
@@ -15,16 +15,17 @@ const subCategoryRoute = (subCategoryCollection) => {
     
         //   post api 
         
-        router.post("/", async (req, res) => {
-            const { _id, par_cat_id, sub_cat_id, sub_cat_name, userInfo } = req.body;
+        router.post("/api/admin/insert-update/sub-categoty", async (req, res) => {
+            const { _id, par_cat_id, sub_cat_id, par_cat_name,  sub_cat_name, userInfo } = req.body;
       
             const data = {
               par_cat_id: typeof par_cat_id === "number" ? par_cat_id : null,
               sub_cat_id: typeof sub_cat_id === "number" ? sub_cat_id : null,
+              par_cat_name: typeof par_cat_name === "string" ? par_cat_name : null,
               sub_cat_name: typeof sub_cat_name === "string" ? sub_cat_name : null,
               userInfo: typeof userInfo === "string" ? userInfo : null
             };
-            if (data.par_cat_id === null || data.sub_cat_id === null || !data.sub_cat_name || !data.userInfo ) {
+            if (data.par_cat_id === null || data.sub_cat_id === null || !data.sub_cat_name || !data.userInfo || !data.par_cat_name ) {
               return res
                 .status(404)
                 .send({ error: "Invalid or missing required fields" });

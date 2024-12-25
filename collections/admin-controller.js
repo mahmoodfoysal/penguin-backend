@@ -4,8 +4,8 @@ const router = express.Router();
 
 const adminRoute = (adminCollection) => {
 
-    // get api 
-    router.get("/:email", async (req, res) => {
+    // get admin check
+    router.get("/admin/:email", async (req, res) => {
         const email = req.params.email;
         const query = { email: email };
         const user = await adminCollection.findOne(query);
@@ -16,7 +16,8 @@ const adminRoute = (adminCollection) => {
         res.json({ admin: isAdmin, message: "Successful" });
       });
 
-      router.get('/', async(req, res) => {
+      // get admin list 
+      router.get('/api/admin/get-admin-list', async(req, res) => {
         const getAdmin = adminCollection.find();
         const result = await getAdmin.toArray();
         res.send({
@@ -27,7 +28,7 @@ const adminRoute = (adminCollection) => {
 
 
     // post api 
-    router.post("/", async (req, res) => {
+    router.post("/api/admin/insert-update-admin", async (req, res) => {
         const { _id, email, role, role_id } = req.body;
   
         const data = {

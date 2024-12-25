@@ -4,7 +4,7 @@ const router = express.Router();
 
 const parentCategoryRoute = (parentCatCollection) => {
     // get api 
-    router.get('/', async(req, res) => {
+    router.get('/api/admin/get-parent-category', async(req, res) => {
         const getParentCat = parentCatCollection.find();
         const result = await getParentCat.toArray();
         res.send({
@@ -15,7 +15,7 @@ const parentCategoryRoute = (parentCatCollection) => {
 
     //   post api 
     
-    router.post("/", async (req, res) => {
+    router.post("/api/admin/insert-update-parent-category", async (req, res) => {
         const { _id, par_cat_id, par_cat_name } = req.body;
   
         const data = {

@@ -5,7 +5,7 @@ const router = express.Router();
 function bannerRoutes(bannerCollection) {
   // get api
 
-  router.get("/", async (req, res) => {
+  router.get("/api/admin/get-banner", async (req, res) => {
     try {
       const getBanner = bannerCollection.find();
       const result = await getBanner.toArray();
@@ -21,7 +21,7 @@ function bannerRoutes(bannerCollection) {
   });
 
   // POST API
-  router.post("/", async (req, res) => {
+  router.post("/api/admin/insert-update/banner", async (req, res) => {
     const { _id, prod_id, prod_img, title1, title2, title_details } = req.body;
     const data = {
       prod_id: typeof prod_id === "number" ? prod_id : null,

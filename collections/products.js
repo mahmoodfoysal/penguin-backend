@@ -4,7 +4,7 @@ const router = express.Router();
 
 const productsRoute = (productsCollection) => {
     // get api 
-    router.get("/", async(req, res) => {
+    router.get("/api/admin/get-product-list", async(req, res) => {
       try {
         const getProducts = productsCollection.find();
         const result = await getProducts.toArray();
@@ -18,7 +18,7 @@ const productsRoute = (productsCollection) => {
     });
 
     // post api 
-    router.post("/", async (req, res) => {
+    router.post("/api/admin/insert-update/product-list", async (req, res) => {
         const {
           _id,
           parent_cat_id,
