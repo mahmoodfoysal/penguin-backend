@@ -51,7 +51,7 @@ const parentCategoryRoute = (parentCatCollection) => {
               .send({ message: "Successful", id: result.insertedId });
           }
         } catch (error) {
-          res.status(500).send({ error: "Failed to create or update admin" });
+          res.status(500).send({ error: "Failed to create or update category" });
         }
       });
 

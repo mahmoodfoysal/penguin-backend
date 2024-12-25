@@ -13,6 +13,7 @@ const productsRoute = require("./products.js");
 const adminRoute = require("./admin-controller.js");
 const parentCategoryRoute = require("./parent-category.js");
 const dashboardMenuRoute = require("./dashboard-menu.js");
+const subCategoryRoute = require("./sub-category.js");
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -35,9 +36,8 @@ async function run() {
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
 
-    // ***************************code write here***************************
-
     // ############################################ all database collection write here ########################################### 
+
     const database = client.db("penguin-ecommerce");
     const bannerCollection = database.collection("banner");
     const imgageCategoryCollection = database.collection("image-category");
@@ -45,10 +45,12 @@ async function run() {
     const adminCollection = database.collection("admin");
     const menuCollection = database.collection("dashboard-menu");
     const parentCatCollection = database.collection("parent-category");
+    const subCategoryCollection = database.collection("sub-category");
 
     // ############################################ all database collection write here ########################################### 
 
     // ############################################ all collection route write here ########################################### 
+    
     // banner
     app.use("/banner", bannerRoutes(bannerCollection));
 
@@ -66,6 +68,9 @@ async function run() {
 
     // dashboard menu 
     app.use("/dashboard-menu", dashboardMenuRoute(menuCollection));
+
+    // sub category 
+    app.use("/sub-category", subCategoryRoute(subCategoryCollection));
 
     // ############################################ all collection route write here ########################################### 
 
