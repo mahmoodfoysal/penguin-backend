@@ -4,7 +4,7 @@ const router = express.Router();
 
 const productsRoute = (productsCollection) => {
     // get api 
-    router.get("/api/admin/get-product-list", async(req, res) => {
+    router.get("/api/penguin/get-product-list", async(req, res) => {
       try {
         const getProducts = productsCollection.find();
         const result = await getProducts.toArray();
