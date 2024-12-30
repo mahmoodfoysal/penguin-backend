@@ -14,6 +14,7 @@ const adminRoute = require("./collections/admin-controller.js");
 const parentCategoryRoute = require("./collections/parent-category.js");
 const dashboardMenuRoute = require("./collections/dashboard-menu.js");
 const subCategoryRoute = require("./collections/sub-category.js");
+const subSubCategoryRoute = require("./collections/sub-sub-category.js");
 const getAllCategoriesRoute = require("./collections/get-all-categories.js");
 const port = process.env.PORT || 5000;
 
@@ -47,6 +48,7 @@ async function run() {
     const menuCollection = database.collection("dashboard-menu");
     const parentCatCollection = database.collection("parent-category");
     const subCategoryCollection = database.collection("sub-category");
+    const subSubCategoryCollection = database.collection("sub-sub-category");
 
     // ############################################ all database collection write here ########################################### 
 
@@ -72,6 +74,9 @@ async function run() {
 
     // sub category 
     app.use("/", subCategoryRoute(subCategoryCollection));
+
+    // sub sub category
+    app.use("/", subSubCategoryRoute(subSubCategoryCollection));
 
     // categories 
     app.use("/", getAllCategoriesRoute);
