@@ -16,14 +16,15 @@ const parentCategoryRoute = (parentCatCollection) => {
     //   post api 
     
     router.post("/api/admin/insert-update-parent-category", async (req, res) => {
-        const { _id, par_cat_id, par_cat_name, status } = req.body;
+        const { _id, par_cat_id, par_cat_name, status, userInfo } = req.body;
   
         const data = {
           par_cat_id: typeof par_cat_id === "number" ? par_cat_id : null,
           par_cat_name: typeof par_cat_name === "string" ? par_cat_name : null,
           status: typeof status === "number" ? status : null,
+          userInfo: typeof userInfo === "string" ? userInfo : null,
         };
-        if (data.par_cat_id === null || !data.par_cat_name || data.status === null ) {
+        if (data.par_cat_id === null || !data.par_cat_name || data.status === null || !data.userInfo) {
           return res
             .status(404)
             .send({ error: "Invalid or missing required fields" });
@@ -56,6 +57,7 @@ const parentCategoryRoute = (parentCatCollection) => {
         }
       });
 
+      // update category status 
       router.patch('/api/admin/update-parent-category-status/:id', async (req, res) => {
         try {
           const id = req.params.id;
