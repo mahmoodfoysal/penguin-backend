@@ -21,15 +21,15 @@ const productsRoute = (productsCollection) => {
     router.post("/api/admin/insert-update/product-list", async (req, res) => {
         const {
           _id,
-          parent_cat_id,
+          par_cat_id,
           sub_cat_id,
           sub_sub_cat_id,
-          sub_sub_sub_cat_id,
           prod_id,
           prod_image,
           prod_name,
           price,
           prod_type,
+          prod_type_name,
           rating,
           stock,
           prod_brand,
@@ -40,17 +40,15 @@ const productsRoute = (productsCollection) => {
         } = req.body;
   
         const data = {
-          parent_cat_id: typeof parent_cat_id === "number" ? parent_cat_id : null,
+          par_cat_id: typeof par_cat_id === "number" ? par_cat_id : null,
           sub_cat_id: typeof sub_cat_id === "number" ? sub_cat_id : null,
-          sub_sub_cat_id:
-            typeof sub_sub_cat_id === "number" ? sub_sub_cat_id : null,
-          sub_sub_sub_cat_id:
-            typeof sub_sub_sub_cat_id === "number" ? sub_sub_sub_cat_id : null,
+          sub_sub_cat_id: typeof sub_sub_cat_id === "number" ? sub_sub_cat_id : null,
           prod_id: typeof prod_id === "number" ? prod_id : null,
           prod_image: typeof prod_image === "string" ? prod_image : null,
           prod_name: typeof prod_name === "string" ? prod_name : null,
           price: typeof price === "number" ? price : null,
           prod_type: typeof prod_type === "string" ? prod_type : null,
+          prod_type_name: typeof prod_type_name === "string" ? prod_type_name : null,
           stock: typeof stock === "number" ? stock : null,
           currency_id: typeof currency_id === "number" ? currency_id : null,
           rating: typeof rating === "number" ? rating : null,
@@ -61,16 +59,21 @@ const productsRoute = (productsCollection) => {
         };
   
         if (
-          parent_cat_id === null ||
-          prod_id === null ||
-          prod_image === null ||
-          prod_name === null ||
-          price === null ||
-          prod_type === null ||
-          stock === null ||
-          currency_id === null ||
-          currency_name === null ||
-          status === null
+          data.par_cat_id === null ||
+          data.sub_cat_id === null ||
+          data.prod_id === null ||
+          data.price === null ||
+          data.stock === null ||
+          data.currency_id === null ||
+          !data.prod_name ||
+          !data.prod_image ||
+          !data.par_cat_name ||
+          !data.prod_type_name ||
+          !data.prod_type ||
+          !data.prod_image ||
+          !data.currency_name ||
+          !data.description ||
+          data.status === null
         ) {
           return res
             .status(404)
