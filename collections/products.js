@@ -36,6 +36,7 @@ const productsRoute = (productsCollection) => {
           description,
           currency_id,
           currency_name,
+          user_info,
           status,
         } = req.body;
   
@@ -55,6 +56,7 @@ const productsRoute = (productsCollection) => {
           currency_name: typeof currency_name === "string" ? currency_name : null,
           description: typeof description === "string" ? description : null,
           prod_brand: typeof prod_brand === "string" ? prod_brand : null,
+          user_info: typeof user_info === "string" ? user_info : null,
           status: typeof status === "number" ? status : null,
         };
   
@@ -70,6 +72,7 @@ const productsRoute = (productsCollection) => {
           !data.prod_type_name ||
           !data.prod_type ||
           !data.currency_name ||
+          !data.user_info ||
           data.status === null
         ) {
           return res
