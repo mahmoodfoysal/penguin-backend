@@ -67,18 +67,16 @@ const productsRoute = (productsCollection) => {
           data.currency_id === null ||
           !data.prod_name ||
           !data.prod_image ||
-          !data.par_cat_name ||
           !data.prod_type_name ||
           !data.prod_type ||
-          !data.prod_image ||
           !data.currency_name ||
-          !data.description ||
           data.status === null
         ) {
           return res
-            .status(404)
+            .status(404) // Change to 400 for a Bad Request
             .send({ error: "Invalid or missing required fields" });
         }
+        
         try {
           if (_id) {
             const updateDocId = new ObjectId(_id);
@@ -91,7 +89,7 @@ const productsRoute = (productsCollection) => {
               }
             );
             if (result.modifiedCount === 0) {
-              return res.status(400).send({ error: "No data modified" });
+              return res.status(404).send({ error: "No data modified" });
             }
             res
               .status(201)
