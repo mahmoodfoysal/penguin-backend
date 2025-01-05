@@ -119,7 +119,7 @@ const productsRoute = (productsCollection) => {
       });
 
       // update product status 
-      router.patch('/api/admin/update-product-status', async(req, res) => {
+      router.patch('/api/admin/update-product-status/:id', async(req, res) => {
         const id = req.params.id;
         const filter = {_id: new ObjectId(id)};
         const {status} = req.body;
