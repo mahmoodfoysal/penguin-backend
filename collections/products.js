@@ -93,7 +93,7 @@ const productsRoute = (productsCollection) => {
             }
             res
               .status(201)
-              .send({ message: "Update Successful", id: result.modifiedCount });
+              .send({ message: "Update Successful", id:_id });
           } else {
             const result = await productsCollection.insertOne(data);
             res
@@ -106,6 +106,17 @@ const productsRoute = (productsCollection) => {
             .send({ error: "Failed to create or update image category" });
         }
       });
+
+      // delete api 
+      router.delete('/api/admin/delete-product-list', async(req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const result = await productsCollection.deleteOne(query);
+        res.status(201).send({
+          message: "Successful",
+          id: _id
+        })
+      })
       
       return router
 };
