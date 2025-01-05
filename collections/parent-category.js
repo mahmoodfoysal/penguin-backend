@@ -75,6 +75,17 @@ const parentCategoryRoute = (parentCatCollection) => {
           res.status(500).send({ message: "An error occurred while updating the status." });
         }
       });
+
+      // delete parent category 
+      router.delete('/api/admin/delete-parent-category-list/:id', async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const result = await parentCatCollection.deleteOne(filter);
+        res.status(201).send({
+          message: "Parent category deleted successful",
+          deletedCount: result?.deletedCount
+        })
+      })
       
       return router;
 };
