@@ -22,7 +22,7 @@ const subCategoryRoute = (subCategoryCollection) => {
       sub_cat_id,
       par_cat_name,
       sub_cat_name,
-      userInfo,
+      user_info,
       status
     } = req.body;
 
@@ -31,14 +31,14 @@ const subCategoryRoute = (subCategoryCollection) => {
       sub_cat_id: typeof sub_cat_id === "number" ? sub_cat_id : null,
       par_cat_name: typeof par_cat_name === "string" ? par_cat_name : null,
       sub_cat_name: typeof sub_cat_name === "string" ? sub_cat_name : null,
-      userInfo: typeof userInfo === "string" ? userInfo : null,
+      user_info: typeof user_info === "string" ? user_info : null,
       status: typeof status === "number" ? status : null,
     };
     if (
       data.par_cat_id === null ||
       data.sub_cat_id === null ||
       !data.sub_cat_name ||
-      !data.userInfo ||
+      !data.user_info ||
       !data.par_cat_name ||
       data.status === null
     ) {
