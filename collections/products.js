@@ -108,15 +108,15 @@ const productsRoute = (productsCollection) => {
       });
 
       // delete api 
-      router.delete('/api/admin/delete-product-list', async(req, res) => {
+      router.delete('/api/admin/delete-product-list/:id', async(req, res) => {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)};
         const result = await productsCollection.deleteOne(query);
         res.status(201).send({
-          message: "Successful",
-          id: _id
-        })
-      })
+          message: "Product delete successful",
+          deletedCount: result?.deletedCount
+        });
+      });
       
       return router
 };
