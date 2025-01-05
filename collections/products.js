@@ -18,7 +18,7 @@ const productsRoute = (productsCollection) => {
     });
 
     // post api 
-    router.post("/api/admin/insert-update/product-list", async (req, res) => {
+    router.post("/api/admin/insert-update-product-list", async (req, res) => {
         const {
           _id,
           par_cat_id,
