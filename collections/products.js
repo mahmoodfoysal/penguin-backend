@@ -117,8 +117,22 @@ const productsRoute = (productsCollection) => {
           deletedCount: result?.deletedCount
         });
       });
+
+      // update product status 
+      router.patch('/api/admin/update-product-status', async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const {status} = req.body;
+        const updateDoc = {
+          $set: {status},
+        };
+        const result = await productsCollection.updateOne(filter, updateDoc);
+        res.status(201).send({
+          message: status === 1 ? "Product active successful" : "Product inactive successful"
+        });
+      });
       
-      return router
+      return router;
 };
 
 module.exports = productsRoute;
