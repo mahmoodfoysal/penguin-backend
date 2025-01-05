@@ -95,6 +95,17 @@ const subCategoryRoute = (subCategoryCollection) => {
     }
   );
 
+  // delete api 
+  router.delete('/api/admin/delete-sub-category-list/:id', async(req, res) => {
+    const id = req.params.id;
+    const filter = {_id: new ObjectId(id)};
+    const result = await subCategoryCollection.deleteOne(filter);
+    res.status(201).send({
+      message: "Sub Category deleted successful",
+      deletedCount: result?.deletedCount
+    })
+  })
+
   return router;
 };
 
