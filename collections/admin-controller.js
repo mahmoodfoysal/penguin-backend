@@ -29,14 +29,15 @@ const adminRoute = (adminCollection) => {
 
     // post api 
     router.post("/api/admin/insert-update-admin", async (req, res) => {
-        const { _id, email, role, role_id } = req.body;
+        const { _id, email, role, role_id, user_info } = req.body;
   
         const data = {
           email: typeof email === "string" ? email : null,
           role: typeof role === "string" ? role : null,
           role_id: typeof role_id === "number" ? role_id : null,
+          user_info: typeof user_info === "string" ? user_info : null,
         };
-        if (!email || !role || !role_id) {
+        if (!email || !role || !role_id || !user_info) {
           return res
             .status(404)
             .send({ error: "Invalid or missing required fields" });
