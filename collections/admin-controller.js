@@ -70,6 +70,17 @@ const adminRoute = (adminCollection) => {
         }
       });
 
+      // delete admin list
+      router.delete('/api/admin/delete-admin-list/:id', async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const result = await adminCollection.deleteOne(filter);
+        res.status(201).send({
+          message: "Admin delete successful",
+          deletedCount: result?.deletedCount
+        })
+      });
+
       return router;
 };
 
