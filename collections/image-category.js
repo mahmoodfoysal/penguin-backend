@@ -9,12 +9,12 @@ const imageCategoryRoute = (imgageCategoryCollection) => {
     try {
         const getImageCategory = imgageCategoryCollection.find();
         const result = await getImageCategory.toArray();
-        res.send({
+        res.status(200).send({
           list_data: result,
           message: "Successful",
         });
       } catch (error) {
-        res.status(404).send({ error: "Image category data can not fetch" });
+        res.status(500).send({ error: "Image category data can not fetch" });
       }
   });
 

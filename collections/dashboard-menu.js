@@ -13,7 +13,7 @@ const dashboardMenuRoute = (menuCollection) => {
           })
         }
         catch (error) {
-          res.status(404).send({error: 'Menu can not found'});
+          res.status(400).send({error: 'Menu can not found'});
         }
       });
 

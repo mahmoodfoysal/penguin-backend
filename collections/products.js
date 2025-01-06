@@ -8,12 +8,12 @@ const productsRoute = (productsCollection) => {
       try {
         const getProducts = productsCollection.find();
         const result = await getProducts.toArray();
-        res.send({
+        res.status(200).send({
           list_data: result,
           message: "Successful",
         });
       } catch (error) {
-        res.status(404).send({ error: "Products data can not fetch" });
+        res.status(500).send({ error: "Products data can not fetch" });
       }
     });
 
@@ -76,7 +76,7 @@ const productsRoute = (productsCollection) => {
           data.status === null
         ) {
           return res
-            .status(404) // Change to 400 for a Bad Request
+            .status(400) // Change to 400 for a Bad Request
             .send({ error: "Invalid or missing required fields" });
         }
         
@@ -115,7 +115,7 @@ const productsRoute = (productsCollection) => {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)};
         const result = await productsCollection.deleteOne(query);
-        res.status(201).send({
+        res.status(200).send({
           message: "Product delete successful",
           deletedCount: result?.deletedCount
         });
@@ -130,7 +130,7 @@ const productsRoute = (productsCollection) => {
           $set: {status},
         };
         const result = await productsCollection.updateOne(filter, updateDoc);
-        res.status(201).send({
+        res.status(200).send({
           message: status === 1 ? "Product active successful" : "Product inactive successful"
         });
       });

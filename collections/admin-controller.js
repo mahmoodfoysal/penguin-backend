@@ -75,7 +75,7 @@ const adminRoute = (adminCollection) => {
         const id = req.params.id;
         const filter = {_id: new ObjectId(id)};
         const result = await adminCollection.deleteOne(filter);
-        res.status(201).send({
+        res.status(200).send({
           message: "Admin delete successful",
           deletedCount: result?.deletedCount
         })

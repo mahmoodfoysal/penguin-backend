@@ -71,6 +71,16 @@ function bannerRoutes(bannerCollection) {
     }
   });
 
+  // get api 
+  router.get('/api/penguin/get-home-banner', async(req, res) => {
+    const getBanner = bannerCollection.find();
+    const result = await getBanner.toArray();
+    res.status(200).send({
+      message: 'Successful',
+      list_data: result
+    });
+  });
+
   return router;
 }
 

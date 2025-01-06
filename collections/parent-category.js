@@ -7,7 +7,7 @@ const parentCategoryRoute = (parentCatCollection) => {
     router.get('/api/admin/get-parent-category', async(req, res) => {
         const getParentCat = parentCatCollection.find();
         const result = await getParentCat.toArray();
-        res.send({
+        res.status(200).send({
           list_data: result,
           message: 'Successful'
         });
@@ -26,7 +26,7 @@ const parentCategoryRoute = (parentCatCollection) => {
         };
         if (data.par_cat_id === null || !data.par_cat_name || data.status === null || !data.user_info) {
           return res
-            .status(404)
+            .status(400)
             .send({ error: "Invalid or missing required fields" });
         }
         try {
@@ -67,7 +67,7 @@ const parentCategoryRoute = (parentCatCollection) => {
             $set: {status}
           }
           const result = await parentCatCollection.updateOne(filter, updateDoc);
-          res.status(201).send({
+          res.status(200).send({
             message: status === 1 ? 'Category active successful' : 'Category inactive successful'
           });
         }
@@ -81,7 +81,7 @@ const parentCategoryRoute = (parentCatCollection) => {
         const id = req.params.id;
         const filter = {_id: new ObjectId(id)};
         const result = await parentCatCollection.deleteOne(filter);
-        res.status(201).send({
+        res.status(200).send({
           message: "Parent category deleted successful",
           deletedCount: result?.deletedCount
         })

@@ -100,7 +100,7 @@ const subCategoryRoute = (subCategoryCollection) => {
     const id = req.params.id;
     const filter = {_id: new ObjectId(id)};
     const result = await subCategoryCollection.deleteOne(filter);
-    res.status(201).send({
+    res.status(200).send({
       message: "Sub Category deleted successful",
       deletedCount: result?.deletedCount
     })

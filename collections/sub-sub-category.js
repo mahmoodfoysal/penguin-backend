@@ -50,7 +50,7 @@ const subSubCategoryRoute = (subSubCategoryCollection) => {
       data.status === null
     ) {
       return res
-        .status(404)
+        .status(400)
         .send({ error: "Invalid or missing required fields" });
     }
 
@@ -90,7 +90,7 @@ const subSubCategoryRoute = (subSubCategoryCollection) => {
           $set: { status },
         };
         const result = await subSubCategoryCollection.updateOne(filter, updateDoc);
-        res.status(201).send({
+        res.status(200).send({
           message:
             status === 1
               ? "Category active successful"
@@ -109,7 +109,7 @@ const subSubCategoryRoute = (subSubCategoryCollection) => {
     const id = req.params.id;
     const filter = {_id: new ObjectId(id)};
     const result = await subSubCategoryCollection.deleteOne(filter);
-    res.status(201).send({
+    res.status(200).send({
       message: "Sub sub category deleted successful",
       deletedCount: result?.deletedCount
     })
