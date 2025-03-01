@@ -143,7 +143,7 @@ const productsRoute = (productsCollection) => {
       const query = { _id: new ObjectId(id) };
       const result = await productsCollection.findOne(query);
       res.status(200).send({
-        list_data: result,
+        details_data: result,
         message: "Successful",
       });
     } catch (error) {
