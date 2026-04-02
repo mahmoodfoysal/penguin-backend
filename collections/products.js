@@ -91,7 +91,7 @@ const productsRoute = (productsCollection) => {
           },
           {
             $set: data,
-          }
+          },
         );
         if (result.modifiedCount === 0) {
           return res.status(404).send({ error: "No data modified" });
@@ -137,19 +137,31 @@ const productsRoute = (productsCollection) => {
   });
 
   // get single products
-  router.get("/api/penguin/get-product-list/:id", async (req, res) => {
+  router.get("/api/penguin/get-product-list/:id/:prod_id", async (req, res) => {
     try {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
+      const { id, prod_id } = req.params;
+
+      const query = {
+        _id: new ObjectId(id),
+        prod_id: Number(prod_id), // match both
+      };
+
       const result = await productsCollection.findOne(query);
+
+      if (!result) {
+        return res.status(404).send({
+          message: "Product not found",
+        });
+      }
+
       res.status(200).send({
         details_data: result,
         message: "Successful",
       });
     } catch (error) {
-      res
-        .status(500)
-        .send({ error: "Faild to fatch product information" });
+      res.status(500).send({
+        error: "Failed to fetch product information",
+      });
     }
   });
 
