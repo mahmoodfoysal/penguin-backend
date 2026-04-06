@@ -25,17 +25,17 @@ const orderRoute = (ordersCollection) => {
         email,
         phone_no,
         city,
-        country,
-        state,
+        country_name,
+        country_id,
         zip,
         address,
         card_no,
         card_exp_date,
         card_cvc,
         sub_total,
-        tax_total,
+        vat_total,
         shipping,
-        gross_total,
+        total_amount,
         order_status,
         order_date,
         payment_method,
@@ -76,8 +76,9 @@ const orderRoute = (ordersCollection) => {
         email: typeof email === "string" ? email : null,
         phone_no: typeof phone_no === "number" ? phone_no : null,
         city: typeof city === "string" ? city : null,
-        country: typeof country === "string" ? country : null,
-        state: typeof state === "string" ? state : null,
+        country_name: typeof country_name === "string" ? country_name : null,
+
+        country_id: typeof country_id === "number" ? country_id : null,
         zip: typeof zip === "number" ? zip : null,
         address: typeof address === "string" ? address : null,
 
@@ -86,9 +87,9 @@ const orderRoute = (ordersCollection) => {
         card_cvc: typeof card_cvc === "number" ? card_cvc : null,
 
         sub_total: typeof sub_total === "number" ? sub_total : 0,
-        tax_total: typeof tax_total === "number" ? tax_total : 0,
+        vat_total: typeof vat_total === "number" ? vat_total : 0,
         shipping: typeof shipping === "number" ? shipping : 0,
-        gross_total: typeof gross_total === "number" ? gross_total : 0,
+        total_amount: typeof total_amount === "number" ? total_amount : 0,
 
         order_status:
           typeof order_status === "string" ? order_status : "pending",
@@ -98,7 +99,7 @@ const orderRoute = (ordersCollection) => {
             : new Date().toISOString(),
 
         payment_method:
-          typeof payment_method === "string" ? payment_method : null,
+          typeof payment_method === "number" ? payment_method : null,
 
         bkash_no: typeof bkash_no === "number" ? bkash_no : null,
         bkash_trns_no: typeof bkash_trns_no === "number" ? bkash_trns_no : null,
@@ -114,11 +115,11 @@ const orderRoute = (ordersCollection) => {
         !data.full_name ||
         !data.email ||
         !data.city ||
-        !data.state ||
-        !data.country ||
+        !data.country_name ||
         !data.address ||
         !data.order_status ||
         data.phone_no === null ||
+        data.country_id === null ||
         data.zip === null ||
         data.payment_method === null
       ) {
@@ -141,6 +142,7 @@ const orderRoute = (ordersCollection) => {
         }
 
         return res.status(200).send({
+          status: 200,
           message: "Update Successful",
           id: _id,
         });
@@ -150,6 +152,7 @@ const orderRoute = (ordersCollection) => {
       const result = await ordersCollection.insertOne(data);
 
       res.status(201).send({
+        status: 201,
         message: "Order Created Successfully",
         id: result.insertedId,
       });
@@ -168,6 +171,7 @@ const orderRoute = (ordersCollection) => {
       });
 
       res.status(200).send({
+        status: 200,
         message: "Order delete successful",
         deletedCount: result.deletedCount,
       });
@@ -187,7 +191,9 @@ const orderRoute = (ordersCollection) => {
       );
 
       res.status(200).send({
+        status: 200,
         message: "Order status updated",
+        id: result.insertedId,
       });
     } catch (error) {
       res.status(500).send({ error: "Status update failed" });
