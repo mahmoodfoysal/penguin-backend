@@ -1,14 +1,10 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const {
-  MongoClient,
-  ServerApiVersion,
-  Collection,
-} = require("mongodb");
+const { MongoClient, ServerApiVersion, Collection } = require("mongodb");
 require("dotenv").config();
-const bannerRoutes = require('./collections/banner.js');
-const imageCategoryRoute = require('./collections/image-category.js');
+const bannerRoutes = require("./collections/banner.js");
+const imageCategoryRoute = require("./collections/image-category.js");
 const productsRoute = require("./collections/products.js");
 const adminRoute = require("./collections/admin-controller.js");
 const parentCategoryRoute = require("./collections/parent-category.js");
@@ -16,6 +12,7 @@ const dashboardMenuRoute = require("./collections/dashboard-menu.js");
 const subCategoryRoute = require("./collections/sub-category.js");
 const subSubCategoryRoute = require("./collections/sub-sub-category.js");
 const getAllCategoriesRoute = require("./collections/get-all-categories.js");
+const orderRoute = require("./collections/orders.js");
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -35,10 +32,10 @@ async function run() {
     await client.connect();
     await client.db("admin").command({ ping: 1 });
     console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
+      "Pinged your deployment. You successfully connected to MongoDB!",
     );
 
-    // ############################################ all database collection write here ########################################### 
+    // ############################################ all database collection write here ###########################################
 
     const database = client.db("penguin-ecommerce");
     const bannerCollection = database.collection("banner");
@@ -49,41 +46,43 @@ async function run() {
     const parentCatCollection = database.collection("parent-category");
     const subCategoryCollection = database.collection("sub-category");
     const subSubCategoryCollection = database.collection("sub-sub-category");
+    const ordersCollection = database.collection("orders-collection");
 
-    // ############################################ all database collection write here ########################################### 
+    // ############################################ all database collection write here ###########################################
 
-    // ############################################ all collection route write here ########################################### 
+    // ############################################ all collection route write here ###########################################
 
     // banner
     app.use("/", bannerRoutes(bannerCollection));
 
-    // image category 
-    app.use('/', imageCategoryRoute(imgageCategoryCollection));
+    // image category
+    app.use("/", imageCategoryRoute(imgageCategoryCollection));
 
-    // products 
+    // products
     app.use("/", productsRoute(productsCollection));
 
-    // admin controller 
-    app.use('/', adminRoute(adminCollection));
-    
-    // parent category 
+    // admin controller
+    app.use("/", adminRoute(adminCollection));
+
+    // parent category
     app.use("/", parentCategoryRoute(parentCatCollection));
 
-    // dashboard menu 
+    // dashboard menu
     app.use("/", dashboardMenuRoute(menuCollection));
 
-    // sub category 
+    // sub category
     app.use("/", subCategoryRoute(subCategoryCollection));
 
     // sub sub category
     app.use("/", subSubCategoryRoute(subSubCategoryCollection));
 
-    // categories 
+    // categories
     app.use("/", getAllCategoriesRoute);
 
-    // ############################################ all collection route write here ########################################### 
+    // orders
+    app.use("/", orderRoute(ordersCollection));
 
-
+    // ############################################ all collection route write here ###########################################
   } finally {
     // await client.close();
   }
