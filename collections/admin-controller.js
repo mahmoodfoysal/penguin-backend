@@ -21,7 +21,7 @@ const adminRoute = (adminCollection) => {
   });
 
   // get admin list
-  router.get("/api/admin/get-admin-list", async (req, res) => {
+  router.get("/api/admin/get-admin-list/:email", async (req, res) => {
     const getAdmin = adminCollection.find();
     const result = await getAdmin.toArray();
     res.send({
