@@ -12,7 +12,12 @@ const adminRoute = (adminCollection) => {
     if (user?.role === "Admin") {
       isAdmin = true;
     }
-    res.json({ admin: isAdmin, role_id: user?.role_id, message: "Successful" });
+    res.json({
+      admin: isAdmin,
+      role_id: user?.role_id,
+      email: user?.email,
+      message: "Successful",
+    });
   });
 
   // get admin list
