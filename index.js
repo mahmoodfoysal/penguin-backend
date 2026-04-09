@@ -13,6 +13,7 @@ const subCategoryRoute = require("./collections/sub-category.js");
 const subSubCategoryRoute = require("./collections/sub-sub-category.js");
 const getAllCategoriesRoute = require("./collections/get-all-categories.js");
 const orderRoute = require("./collections/orders.js");
+const reviewRoute = require("./collections/review.js");
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -47,6 +48,7 @@ async function run() {
     const subCategoryCollection = database.collection("sub-category");
     const subSubCategoryCollection = database.collection("sub-sub-category");
     const ordersCollection = database.collection("orders-collection");
+    const reviewCollection = database.collection("review-collection");
 
     // ############################################ all database collection write here ###########################################
 
@@ -81,6 +83,9 @@ async function run() {
 
     // orders
     app.use("/", orderRoute(ordersCollection));
+
+    // review
+    app.use("/", reviewRoute(reviewCollection));
 
     // ############################################ all collection route write here ###########################################
   } finally {
