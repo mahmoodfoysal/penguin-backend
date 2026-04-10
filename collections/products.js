@@ -37,6 +37,7 @@ const productsRoute = (productsCollection) => {
       currency_id,
       currency_name,
       user_info,
+      discount,
       status,
     } = req.body;
 
@@ -60,6 +61,7 @@ const productsRoute = (productsCollection) => {
       prod_brand: typeof prod_brand === "string" ? prod_brand : null,
       user_info: typeof user_info === "string" ? user_info : null,
       status: typeof status === "number" ? status : null,
+      discount: typeof discount === "number" ? discount : null,
     };
 
     if (
@@ -162,6 +164,28 @@ const productsRoute = (productsCollection) => {
       res.status(500).send({
         error: "Failed to fetch product information",
       });
+    }
+  });
+
+  // stock update
+  router.patch("/api/penguin/get-product-list/stock/:id", async (req, res) => {
+    try {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateStock = req.body;
+      const updatedDoc = {
+        $set: {
+          stock: updateStock.stock,
+        },
+      };
+      const result = await productsCollection.updateOne(filter, updatedDoc);
+      res.send({
+        stock: result?.stock,
+        message: "Updated",
+      });
+    } catch (error) {
+      console.error("Error updating stock:", error);
+      res.status(500).send({ error: "Failed to update stock" });
     }
   });
 

@@ -130,6 +130,7 @@ const orderRoute = (ordersCollection) => {
 
       // ================= UPDATE =================
       if (_id) {
+        data.modifiedAt = new Date();
         const result = await ordersCollection.updateOne(
           { _id: new ObjectId(_id) },
           { $set: data },
@@ -149,6 +150,7 @@ const orderRoute = (ordersCollection) => {
       }
 
       // ================= INSERT =================
+      data.createdAt = new Date();
       const result = await ordersCollection.insertOne(data);
 
       res.status(201).send({
@@ -187,7 +189,7 @@ const orderRoute = (ordersCollection) => {
 
       const result = await ordersCollection.updateOne(
         { _id: new ObjectId(req.params.id) },
-        { $set: { order_status: order_status } },
+        { $set: { order_status: order_status, modifiedAt: new Date() } },
       );
 
       res.status(200).send({

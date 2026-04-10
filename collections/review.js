@@ -13,14 +13,39 @@ const reviewRoute = (reviewCollection) => {
     });
   });
 
+  // get review by id
+  router.get("/api/penguin/get-review-list/:prod_id", async (req, res) => {
+    try {
+      let prod_id = req.params.prod_id;
+      prod_id = Number(prod_id);
+      if (isNaN(prod_id)) {
+        return res.status(400).send({
+          message: "Invalid prod_id",
+        });
+      }
+      const query = { prod_id: prod_id };
+      const result = await reviewCollection.find(query).toArray();
+      res.send({
+        list_data: result,
+        message: "Successful",
+      });
+    } catch (error) {
+      res.status(500).send({
+        message: "Error fetching reviews",
+        error: error.message,
+      });
+    }
+  });
+
   //   post api
 
-  router.post("/api/penguin/insert-update/review", async (req, res) => {
+  router.post("/api/penguin/insert-update-review-list", async (req, res) => {
     const {
       _id,
-      fullName,
+      full_name,
       email,
       comment,
+      image_url,
       rating,
       prod_id,
       par_cat_id,
@@ -28,16 +53,17 @@ const reviewRoute = (reviewCollection) => {
     } = req.body;
 
     const data = {
-      fullName: typeof par_cat_name === "string" ? fullName : null,
-      email: typeof sub_cat_name === "string" ? email : null,
-      comment: typeof sub_cat_name === "string" ? comment : null,
+      full_name: typeof full_name === "string" ? full_name : null,
+      email: typeof email === "string" ? email : null,
+      comment: typeof comment === "string" ? comment : null,
+      image_url: typeof image_url === "string" ? image_url : null,
       rating: typeof par_cat_id === "number" ? rating : null,
       prod_id: typeof par_cat_id === "number" ? prod_id : null,
       par_cat_id: typeof par_cat_id === "number" ? par_cat_id : null,
       sub_cat_id: typeof sub_cat_id === "number" ? sub_cat_id : null,
     };
     if (
-      !data.fullName ||
+      !data.full_name ||
       !data.email ||
       !data.comment ||
       data.rating === null ||
@@ -68,10 +94,12 @@ const reviewRoute = (reviewCollection) => {
       } else {
         data.createdAt = new Date();
         const result = await reviewCollection.insertOne(data);
-        res.status(201).send({ message: "Successful", id: result.insertedId });
+        res
+          .status(201)
+          .send({ status: 201, message: "Successful", id: result.insertedId });
       }
     } catch (error) {
-      res.status(500).send({ error: "Failed to create or update category" });
+      res.status(500).send({ error: "Failed to create or update" });
     }
   });
 
