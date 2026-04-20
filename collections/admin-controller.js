@@ -29,6 +29,15 @@ const adminRoute = (adminCollection) => {
       message: "Successful",
     });
   });
+  // get all admin
+  router.get("/api/admin/get-admin-list/", async (req, res) => {
+    const getAdmin = adminCollection.find();
+    const result = await getAdmin.toArray();
+    res.send({
+      list_data: result,
+      message: "Successful",
+    });
+  });
 
   // post api
   router.post("/api/admin/insert-update-admin", async (req, res) => {
@@ -48,6 +57,7 @@ const adminRoute = (adminCollection) => {
     try {
       if (_id) {
         const adminId = new ObjectId(_id);
+        data.modifiedAt = new Date();
         const result = await adminCollection.updateOne(
           {
             _id: adminId,
@@ -59,10 +69,15 @@ const adminRoute = (adminCollection) => {
         if (result.modifiedCount === 0) {
           return res.status(400).send({ message: "No data modified" });
         }
-        res.status(201).send({ message: "Update Successful", id: _id });
+        res
+          .status(201)
+          .send({ message: "Update Successful", id: _id, status: 201 });
       } else {
+        data.createdAt = new Date();
         const result = await adminCollection.insertOne(data);
-        res.status(201).send({ message: "Successful", id: result.insertedId });
+        res
+          .status(201)
+          .send({ message: "Successful", id: result.insertedId, status: 201 });
       }
     } catch (error) {
       res.status(500).send({ error: "Failed to create or update admin" });
@@ -77,6 +92,7 @@ const adminRoute = (adminCollection) => {
     res.status(200).send({
       message: "Admin delete successful",
       deletedCount: result?.deletedCount,
+      status: 200,
     });
   });
 
