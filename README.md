@@ -1,7 +1,5 @@
 # Penguin - Backend for penguin frontend
 
-A full-stack MERN e-commerce platform featuring Redux state management, Firebase auth, and a robust admin dashboard.
-
 ## Live Demo
 
 - Live URL: [https://penguin-shopping.web.app/home/](https://penguin-shopping.web.app/home/)
@@ -14,14 +12,9 @@ A full-stack MERN e-commerce platform featuring Redux state management, Firebase
 
 ## Technologies Used
 
-- React.js
-- Redux
-- Firebase
 - Node.js
 - Express.js
 - MongoDB
-- Tailwind CSS
-- Daisy UI
 
 ## Key Features
 
@@ -46,7 +39,7 @@ npm install
 
 ### 3) Configure environment variables
 
-Create a `.env.local` file in the root directory and add:
+Create a `.env` file in the root directory and add:
 
 ```env
 
