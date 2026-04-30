@@ -87,6 +87,7 @@ const productsRoute = (productsCollection) => {
     try {
       if (_id) {
         const updateDocId = new ObjectId(_id);
+        data.modifiedAt = new Date();
         const result = await productsCollection.updateOne(
           {
             _id: updateDocId,
@@ -100,6 +101,7 @@ const productsRoute = (productsCollection) => {
         }
         res.status(201).send({ message: "Update Successful", id: _id });
       } else {
+        data.createdAt = new Date();
         const result = await productsCollection.insertOne(data);
         res.status(201).send({ message: "Successful", id: result.insertedId });
       }
@@ -129,6 +131,7 @@ const productsRoute = (productsCollection) => {
     const updateDoc = {
       $set: { status },
     };
+    data.modifiedAt = new Date();
     const result = await productsCollection.updateOne(filter, updateDoc);
     res.status(200).send({
       message:
@@ -176,6 +179,7 @@ const productsRoute = (productsCollection) => {
       const updatedDoc = {
         $set: {
           stock: updateStock.stock,
+          modifiedAt: new Date(),
         },
       };
       const result = await productsCollection.updateOne(filter, updatedDoc);

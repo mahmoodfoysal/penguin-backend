@@ -15,6 +15,8 @@ const getAllCategoriesRoute = require("./collections/get-all-categories.js");
 const orderRoute = require("./collections/orders.js");
 const reviewRoute = require("./collections/review.js");
 const couponRoute = require("./collections/coupon-collection.js");
+const blogRoute = require("./collections/blog-collection.js");
+const claimPromoRoute = require("./collections/claim-promo-collection.js");
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -51,6 +53,8 @@ async function run() {
     const ordersCollection = database.collection("orders-collection");
     const reviewCollection = database.collection("review-collection");
     const couponCollection = database.collection("coupon-collection");
+    const blogCollection = database.collection("blog-collection");
+    const claimPromoCollection = database.collection("claim-promo-collection");
 
     // ############################################ all database collection write here ###########################################
 
@@ -91,6 +95,12 @@ async function run() {
 
     // coupon
     app.use("/", couponRoute(couponCollection));
+
+    // blog
+    app.use("/", blogRoute(blogCollection));
+
+    // blog
+    app.use("/", claimPromoRoute(claimPromoCollection));
 
     // ############################################ all collection route write here ###########################################
   } finally {
