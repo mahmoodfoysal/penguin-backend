@@ -83,13 +83,17 @@ const couponRoute = (couponCollection) => {
           if (result.modifiedCount === 0) {
             return res.status(400).send({ message: "No data modified" });
           }
-          res.status(201).send({ message: "Update Successful", id: _id });
+          res
+            .status(201)
+            .send({ message: "Update Successful", id: _id, status: 201 });
         } else {
           data.createdAt = new Date();
           const result = await couponCollection.insertOne(data);
-          res
-            .status(201)
-            .send({ message: "Successful", id: result.insertedId });
+          res.status(200).send({
+            message: "Successful",
+            id: result.insertedId,
+            status: 200,
+          });
         }
       } catch (error) {
         res.status(500).send({ error: "Failed to create or update" });
@@ -120,11 +124,12 @@ const couponRoute = (couponCollection) => {
   );
 
   // delete api
-  router.delete("/api/penguin/delete-review-list/:id", async (req, res) => {
+  router.delete("/api/penguin/delete-coupon-list/:id", async (req, res) => {
     const id = req.params.id;
     const filter = { _id: new ObjectId(id) };
     const result = await couponCollection.deleteOne(filter);
     res.status(200).send({
+      status: 200,
       message: "Successful",
       deletedCount: result?.deletedCount,
     });
