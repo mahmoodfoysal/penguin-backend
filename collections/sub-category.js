@@ -15,7 +15,7 @@ const subCategoryRoute = (subCategoryCollection) => {
 
   //   post api
 
-  router.post("/api/admin/insert-update/sub-categoty", async (req, res) => {
+  router.post("/api/admin/insert-update/sub-category", async (req, res) => {
     const {
       _id,
       par_cat_id,
@@ -23,7 +23,7 @@ const subCategoryRoute = (subCategoryCollection) => {
       par_cat_name,
       sub_cat_name,
       user_info,
-      status
+      status,
     } = req.body;
 
     const data = {
@@ -49,24 +49,30 @@ const subCategoryRoute = (subCategoryCollection) => {
     try {
       if (_id) {
         const catId = new ObjectId(_id);
+        data.modifiedAt = new Date();
         const result = await subCategoryCollection.updateOne(
           {
             _id: catId,
           },
           {
             $set: data,
-          }
+          },
         );
         if (result.modifiedCount === 0) {
           return res.status(400).send({ message: "No data modified" });
         }
-        res.status(201).send({ message: "Update Successful", id: _id });
+        res
+          .status(201)
+          .send({ message: "Update Successful", id: _id, status: 201 });
       } else {
+        data.createdAt = new Date();
         const result = await subCategoryCollection.insertOne(data);
-        res.status(201).send({ message: "Successful", id: result.insertedId });
+        res
+          .status(200)
+          .send({ message: "Successful", id: result.insertedId, status: 200 });
       }
     } catch (error) {
-      res.status(500).send({ error: "Failed to create or update category" });
+      res.status(500).send({ error: "Failed to create or update" });
     }
   });
 
@@ -76,35 +82,46 @@ const subCategoryRoute = (subCategoryCollection) => {
       try {
         const id = req.params.id;
         const filter = { _id: new ObjectId(id) };
-        const { status } = req.body;
+        const { status, user_info } = req.body;
         const updateDoc = {
-          $set: { status },
+          $set: { status, user_info, modifiedAt: new Date() },
         };
+
         const result = await subCategoryCollection.updateOne(filter, updateDoc);
-        res.status(201).send({
+
+        if (result.matchedCount === 0) {
+          return res.status(404).send({ message: "Not found" });
+        }
+
+        res.status(200).send({
+          status: 200,
+          id: id,
+          status_code: status,
           message:
             status === 1
               ? "Category active successful"
               : "Category inactive successful",
         });
       } catch (error) {
+        console.error(error);
         res
           .status(500)
           .send({ message: "An error occurred while updating the status." });
       }
-    }
+    },
   );
 
-  // delete api 
-  router.delete('/api/admin/delete-sub-category-list/:id', async(req, res) => {
+  // delete api
+  router.delete("/api/admin/delete-sub-category-list/:id", async (req, res) => {
     const id = req.params.id;
-    const filter = {_id: new ObjectId(id)};
+    const filter = { _id: new ObjectId(id) };
     const result = await subCategoryCollection.deleteOne(filter);
     res.status(200).send({
-      message: "Sub Category deleted successful",
-      deletedCount: result?.deletedCount
-    })
-  })
+      status: 200,
+      message: "Deleted successful",
+      deletedCount: result?.deletedCount,
+    });
+  });
 
   return router;
 };

@@ -8,11 +8,42 @@ const orderRoute = (ordersCollection) => {
     try {
       const result = await ordersCollection.find().toArray();
       res.status(200).send({
+        status: 200,
         list_data: result,
         message: "Successful",
       });
     } catch (error) {
       res.status(500).send({ error: "Order data can not fetch" });
+    }
+  });
+
+  // customer order history
+
+  router.get("/api/penguin/get-order-list/:email", async (req, res) => {
+    try {
+      const email = req.params.email;
+
+      if (!email) {
+        return res.status(400).send({
+          status: 400,
+          message: "Email parameter is required",
+        });
+      }
+
+      const query = { email: email };
+      const result = await ordersCollection.find(query).toArray();
+
+      res.status(200).send({
+        status: 200,
+        list_data: result,
+        message: "Successful",
+      });
+    } catch (error) {
+      console.error("Fetch Error:", error);
+      res.status(500).send({
+        status: 500,
+        error: "Order data could not be fetched",
+      });
     }
   });
 
@@ -160,7 +191,7 @@ const orderRoute = (ordersCollection) => {
       });
     } catch (error) {
       res.status(500).send({
-        error: "Failed to insert/update order",
+        error: "Failed to insert/update",
       });
     }
   });
@@ -185,11 +216,17 @@ const orderRoute = (ordersCollection) => {
   // ================= UPDATE STATUS =================
   router.patch("/api/admin/update-order-status/:id", async (req, res) => {
     try {
-      const { order_status } = req.body;
+      const { order_status, user_info } = req.body;
 
       const result = await ordersCollection.updateOne(
         { _id: new ObjectId(req.params.id) },
-        { $set: { order_status: order_status, modifiedAt: new Date() } },
+        {
+          $set: {
+            order_status: order_status,
+            user_info: user_info,
+            modifiedAt: new Date(),
+          },
+        },
       );
 
       res.status(200).send({

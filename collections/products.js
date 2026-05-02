@@ -13,7 +13,7 @@ const productsRoute = (productsCollection) => {
         message: "Successful",
       });
     } catch (error) {
-      res.status(500).send({ error: "Products data can not fetch" });
+      res.status(500).send({ error: "Data can not fetch" });
     }
   });
 
@@ -30,7 +30,6 @@ const productsRoute = (productsCollection) => {
       price,
       prod_type,
       prod_type_name,
-      rating,
       stock,
       prod_brand,
       description,
@@ -55,7 +54,6 @@ const productsRoute = (productsCollection) => {
         typeof prod_type_name === "string" ? prod_type_name : null,
       stock: typeof stock === "number" ? stock : null,
       currency_id: typeof currency_id === "number" ? currency_id : null,
-      rating: typeof rating === "number" ? rating : null,
       currency_name: typeof currency_name === "string" ? currency_name : null,
       description: typeof description === "string" ? description : null,
       prod_brand: typeof prod_brand === "string" ? prod_brand : null,
@@ -80,7 +78,7 @@ const productsRoute = (productsCollection) => {
       data.status === null
     ) {
       return res
-        .status(400) // Change to 400 for a Bad Request
+        .status(400)
         .send({ error: "Invalid or missing required fields" });
     }
 
@@ -99,16 +97,18 @@ const productsRoute = (productsCollection) => {
         if (result.modifiedCount === 0) {
           return res.status(404).send({ error: "No data modified" });
         }
-        res.status(201).send({ message: "Update Successful", id: _id });
+        res
+          .status(201)
+          .send({ message: "Update Successful", id: _id, status: 201 });
       } else {
         data.createdAt = new Date();
         const result = await productsCollection.insertOne(data);
-        res.status(201).send({ message: "Successful", id: result.insertedId });
+        res
+          .status(200)
+          .send({ message: "Successful", id: result.insertedId, status: 200 });
       }
     } catch (error) {
-      res
-        .status(500)
-        .send({ error: "Failed to create or update image category" });
+      res.status(500).send({ error: "Failed to create or update" });
     }
   });
 
@@ -118,27 +118,41 @@ const productsRoute = (productsCollection) => {
     const query = { _id: new ObjectId(id) };
     const result = await productsCollection.deleteOne(query);
     res.status(200).send({
+      status: 200,
       message: "Product delete successful",
       deletedCount: result?.deletedCount,
     });
   });
 
   // update product status
+
   router.patch("/api/admin/update-product-status/:id", async (req, res) => {
-    const id = req.params.id;
-    const filter = { _id: new ObjectId(id) };
-    const { status } = req.body;
-    const updateDoc = {
-      $set: { status },
-    };
-    data.modifiedAt = new Date();
-    const result = await productsCollection.updateOne(filter, updateDoc);
-    res.status(200).send({
-      message:
-        status === 1
-          ? "Product active successful"
-          : "Product inactive successful",
-    });
+    try {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const { status, user_info } = req.body;
+      const updateDoc = {
+        $set: { status, user_info, modifiedAt: new Date() },
+      };
+
+      const result = await productsCollection.updateOne(filter, updateDoc);
+
+      if (result.matchedCount === 0) {
+        return res.status(404).send({ message: "Not found" });
+      }
+
+      res.status(200).send({
+        status: 200,
+        id: id,
+        status_code: status,
+        message: status === 1 ? "Active successful" : "Inactive successful",
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .send({ message: "An error occurred while updating the status." });
+    }
   });
 
   // get single products
@@ -165,7 +179,7 @@ const productsRoute = (productsCollection) => {
       });
     } catch (error) {
       res.status(500).send({
-        error: "Failed to fetch product information",
+        error: "Failed to fetch",
       });
     }
   });
@@ -189,7 +203,7 @@ const productsRoute = (productsCollection) => {
       });
     } catch (error) {
       console.error("Error updating stock:", error);
-      res.status(500).send({ error: "Failed to update stock" });
+      res.status(500).send({ error: "Failed to update" });
     }
   });
 

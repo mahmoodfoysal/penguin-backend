@@ -3,15 +3,43 @@ const { ObjectId } = require("mongodb");
 const router = express.Router();
 
 const userRoute = (userCollection) => {
+  router.get("/api/penguin/get-user-list/:email", async (req, res) => {
+    try {
+      const email = req.params.email;
+
+      if (!email) {
+        return res.status(400).send({
+          status: 400,
+          message: "Email parameter is required",
+        });
+      }
+
+      const query = { email: email };
+      const result = await userCollection.find(query).toArray();
+
+      res.status(200).send({
+        status: 200,
+        list_data: result,
+        message: "Successful",
+      });
+    } catch (error) {
+      console.error("Fetch Error:", error);
+      res.status(500).send({
+        status: 500,
+        error: " Data could not be fetched",
+      });
+    }
+  });
+
   //   post api
   router.post("/api/penguin/insert-update-user-list", async (req, res) => {
-    const { _id, full_name, user_name, email, address, phone_no } = req.body;
+    const { _id, full_name, email, address, phone_no, user_info } = req.body;
 
     const data = {
       full_name: typeof full_name === "string" ? full_name : null,
-      user_name: typeof user_name === "string" ? user_name : null,
       email: typeof email === "string" ? email : null,
       address: typeof address === "string" ? address : null,
+      user_info: typeof user_info === "string" ? user_info : null,
       phone_no: typeof phone_no === "number" ? phone_no : null,
     };
     if (!data.full_name || !data.email) {
