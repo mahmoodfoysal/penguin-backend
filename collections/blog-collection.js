@@ -8,6 +8,7 @@ const blogRoute = (blogCollection) => {
     const getBlogList = blogCollection.find();
     const result = await getBlogList.toArray();
     res.send({
+      status: 200,
       list_data: result,
       message: "Successful",
     });
@@ -26,11 +27,13 @@ const blogRoute = (blogCollection) => {
 
       if (!result) {
         return res.status(404).send({
+          status: 404,
           message: "Not found",
         });
       }
 
       res.status(200).send({
+        status: 200,
         details_data: result,
         message: "Successful",
       });
@@ -53,8 +56,8 @@ const blogRoute = (blogCollection) => {
       category,
       par_cat_id,
       sub_cat_id,
-      sub_sub_cat_id,
       prod_id,
+      user_info,
     } = req.body;
 
     const data = {
@@ -65,12 +68,12 @@ const blogRoute = (blogCollection) => {
         typeof short_description === "string" ? short_description : null,
       long_description:
         typeof long_description === "string" ? long_description : null,
-      category: typeof long_description === "string" ? long_description : null,
+      category: typeof category === "string" ? category : null,
+      user_info: typeof user_info === "string" ? user_info : null,
 
       par_cat_id: typeof par_cat_id === "number" ? par_cat_id : null,
       sub_cat_id: typeof sub_cat_id === "number" ? sub_cat_id : null,
-      sub_sub_cat_id:
-        typeof sub_sub_cat_id === "number" ? sub_sub_cat_id : null,
+
       prod_id: typeof prod_id === "number" ? prod_id : null,
     };
     if (
@@ -80,14 +83,11 @@ const blogRoute = (blogCollection) => {
       !data.short_description ||
       !data.long_description ||
       !data.category ||
-      data.par_cat_id === null ||
-      data.sub_cat_id === null ||
-      data.sub_sub_cat_id === null ||
-      data.prod_id === null
+      !data.user_info
     ) {
       return res
         .status(404)
-        .send({ error: "Invalid or missing required fields" });
+        .send({ error: "Invalid or missing required fields", status: 400 });
     }
     try {
       if (_id) {
@@ -102,18 +102,27 @@ const blogRoute = (blogCollection) => {
           },
         );
         if (result.modifiedCount === 0) {
-          return res.status(400).send({ message: "No data modified" });
+          return res
+            .status(400)
+            .send({ message: "No data modified", status: 400 });
         }
-        res.status(201).send({ message: "Update Successful", id: _id });
+        res
+          .status(201)
+          .send({ message: "Update Successful", id: _id, status: 201 });
       } else {
         data.createdAt = new Date();
         const result = await blogCollection.insertOne(data);
-        res
-          .status(201)
-          .send({ status: 201, message: "Successful", id: result.insertedId });
+        res.status(201).send({
+          status: 201,
+          message: "Successful",
+          id: result.insertedId,
+          status: 201,
+        });
       }
     } catch (error) {
-      res.status(500).send({ error: "Failed to create or update" });
+      res
+        .status(500)
+        .send({ error: "Failed to create or update", status: 500 });
     }
   });
 
@@ -123,6 +132,7 @@ const blogRoute = (blogCollection) => {
     const filter = { _id: new ObjectId(id) };
     const result = await blogCollection.deleteOne(filter);
     res.status(200).send({
+      status: 200,
       message: "Successful",
       deletedCount: result?.deletedCount,
     });

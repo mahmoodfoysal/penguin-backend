@@ -73,7 +73,7 @@ const reviewRoute = (reviewCollection) => {
     ) {
       return res
         .status(404)
-        .send({ error: "Invalid or missing required fields" });
+        .send({ error: "Invalid or missing required fields", status: 404 });
     }
     try {
       if (_id) {
@@ -88,9 +88,13 @@ const reviewRoute = (reviewCollection) => {
           },
         );
         if (result.modifiedCount === 0) {
-          return res.status(400).send({ message: "No data modified" });
+          return res
+            .status(400)
+            .send({ message: "No data modified", status: 400 });
         }
-        res.status(201).send({ message: "Update Successful", id: _id });
+        res
+          .status(201)
+          .send({ message: "Update Successful", id: _id, status: 201 });
       } else {
         data.createdAt = new Date();
         const result = await reviewCollection.insertOne(data);
@@ -109,6 +113,7 @@ const reviewRoute = (reviewCollection) => {
     const filter = { _id: new ObjectId(id) };
     const result = await reviewCollection.deleteOne(filter);
     res.status(200).send({
+      status: 200,
       message: "Successful",
       deletedCount: result?.deletedCount,
     });
