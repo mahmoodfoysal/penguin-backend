@@ -9,7 +9,11 @@ const adminRoute = (adminCollection) => {
     const query = { email: email };
     const user = await adminCollection.findOne(query);
     let isAdmin = false;
-    if (user?.role === "Admin" || user?.role === "Super Admin") {
+    if (
+      user?.role === "Admin" ||
+      user?.role === "Super Admin" ||
+      user?.role === "Manager"
+    ) {
       isAdmin = true;
     }
     res.json({
