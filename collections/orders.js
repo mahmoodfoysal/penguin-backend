@@ -74,6 +74,7 @@ const orderRoute = (ordersCollection) => {
         bkash_trns_no,
         cash_on_delivery,
         order_list,
+        order_id,
       } = req.body;
 
       // ================= ORDER LIST VALIDATION =================
@@ -102,6 +103,16 @@ const orderRoute = (ordersCollection) => {
       }));
 
       // ================= MAIN DATA =================
+
+      const generateOrderId = () => {
+        const prefix = "PGL-";
+        // Generates a random 10-digit number
+        const randomNumber = Math.floor(
+          1000000000 + Math.random() * 9000000000,
+        );
+        return `${prefix}${randomNumber}`;
+      };
+
       const data = {
         full_name: typeof full_name === "string" ? full_name : null,
         email: typeof email === "string" ? email : null,
@@ -113,7 +124,7 @@ const orderRoute = (ordersCollection) => {
         zip: typeof zip === "number" ? zip : null,
         address: typeof address === "string" ? address : null,
 
-        card_no: typeof card_no === "string" ? card_no : null,
+        card_no: typeof card_no === "number" ? card_no : null,
         card_exp_date: typeof card_exp_date === "string" ? card_exp_date : null,
         card_cvc: typeof card_cvc === "number" ? card_cvc : null,
 
@@ -133,7 +144,7 @@ const orderRoute = (ordersCollection) => {
           typeof payment_method === "number" ? payment_method : null,
 
         bkash_no: typeof bkash_no === "number" ? bkash_no : null,
-        bkash_trns_no: typeof bkash_trns_no === "number" ? bkash_trns_no : null,
+        bkash_trns_no: typeof bkash_trns_no === "string" ? bkash_trns_no : null,
 
         cash_on_delivery:
           typeof cash_on_delivery === "string" ? cash_on_delivery : null,
@@ -182,6 +193,9 @@ const orderRoute = (ordersCollection) => {
 
       // ================= INSERT =================
       data.createdAt = new Date();
+      if (!data.order_id) {
+        data.order_id = generateOrderId();
+      }
       const result = await ordersCollection.insertOne(data);
 
       res.status(201).send({
