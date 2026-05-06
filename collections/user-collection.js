@@ -41,6 +41,7 @@ const userRoute = (userCollection) => {
       address: typeof address === "string" ? address : null,
       user_info: typeof user_info === "string" ? user_info : null,
       phone_no: typeof phone_no === "number" ? phone_no : null,
+      flag: typeof flag === "number" ? flag : null,
     };
     if (!data.full_name || !data.email) {
       return res
@@ -60,18 +61,45 @@ const userRoute = (userCollection) => {
           },
         );
         if (result.modifiedCount === 0) {
-          return res.status(400).send({ message: "No data modified" });
+          return res
+            .status(400)
+            .send({ message: "No data modified", status: 400 });
         }
-        res.status(201).send({ message: "Update Successful", id: _id });
-      } else {
-        data.createdAt = new Date();
-        const result = await userCollection.insertOne(data);
         res
           .status(201)
-          .send({ status: 201, message: "Successful", id: result.insertedId });
+          .send({ message: "Update Successful", id: _id, status: 201 });
+      } else {
+        data.createdAt = new Date();
+        data.flag = 0;
+        const result = await userCollection.insertOne(data);
+        res.status(201).send({
+          status: 201,
+          message: "Successful",
+          id: result.insertedId,
+          status: 201,
+        });
       }
     } catch (error) {
       res.status(500).send({ error: "Failed to create or update" });
+    }
+  });
+
+  // flag update
+  router.patch("/api/penguin/update-user-list/:id/:email", async (req, res) => {
+    try {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      // const { flag } = req.body;
+      const updateDoc = {
+        $set: { flag: 1, appliedAt: new Date() },
+      };
+
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.status(200).send({
+        message: "Successful",
+      });
+    } catch (error) {
+      res.status(500).send({ message: "An error occurred while applied." });
     }
   });
 

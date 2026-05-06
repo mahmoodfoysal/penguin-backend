@@ -13,6 +13,26 @@ const couponRoute = (couponCollection) => {
     });
   });
 
+  // filter with email
+  router.get("/api/penguin/get-coupon-list/:email", async (req, res) => {
+    try {
+      const { email } = req.params;
+
+      const getCouponList = couponCollection.find({ email: email }); // filter here
+      const result = await getCouponList.toArray();
+
+      res.send({
+        list_data: result,
+        message: "Successful",
+      });
+    } catch (error) {
+      res.status(500).send({
+        message: "Error fetching coupon list",
+        error: error.message,
+      });
+    }
+  });
+
   // check coupon is valid or not
   router.get(
     "/api/penguin/get-match-coupon-list/:email/:coupon_code",
