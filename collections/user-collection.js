@@ -96,6 +96,7 @@ const userRoute = (userCollection) => {
 
       const result = await userCollection.updateOne(filter, updateDoc);
       res.status(200).send({
+        status: 200,
         message: "Successful",
       });
     } catch (error) {
