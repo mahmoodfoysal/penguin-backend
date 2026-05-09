@@ -71,10 +71,12 @@ router.get("/api/client/get-all-categories", async (req, res) => {
       ])
       .toArray();
 
-    res.status(200).json({ list_data: categories, message: "Successful" });
+    res
+      .status(200)
+      .json({ list_data: categories, message: "Successful", status: 200 });
   } catch (error) {
     console.error("Error retrieving categories:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send({ message: "Internal Server Error", status: 500 });
   }
 });
 

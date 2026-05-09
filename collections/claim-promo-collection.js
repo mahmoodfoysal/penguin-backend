@@ -1,11 +1,13 @@
 const express = require("express");
 const { ObjectId } = require("mongodb");
+const verifyJWT = require("../middlewares/jwtTokenVerify");
 const router = express.Router();
 
 const claimPromoRoute = (claimPromoCollection) => {
   //   post api
   router.post(
     "/api/penguin/insert-update-clain-promo-list",
+    verifyJWT,
     async (req, res) => {
       const { _id, email } = req.body;
 

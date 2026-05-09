@@ -1,5 +1,6 @@
 const express = require("express");
 const { ObjectId } = require("mongodb");
+const verifyJWT = require("../middlewares/jwtTokenVerify");
 const router = express.Router();
 
 const adminRoute = (adminCollection) => {
@@ -26,16 +27,20 @@ const adminRoute = (adminCollection) => {
   });
 
   // get admin list
-  router.get("/api/admin/get-admin-list/:email", async (req, res) => {
-    const getAdmin = adminCollection.find();
-    const result = await getAdmin.toArray();
-    res.send({
-      list_data: result,
-      message: "Successful",
-    });
-  });
+  router.get(
+    "/api/admin/get-admin-list/:email",
+    verifyJWT,
+    async (req, res) => {
+      const getAdmin = adminCollection.find();
+      const result = await getAdmin.toArray();
+      res.send({
+        list_data: result,
+        message: "Successful",
+      });
+    },
+  );
   // get all admin
-  router.get("/api/admin/get-admin-list/", async (req, res) => {
+  router.get("/api/admin/get-admin-list/", verifyJWT, async (req, res) => {
     const getAdmin = adminCollection.find();
     const result = await getAdmin.toArray();
     res.send({
@@ -45,7 +50,7 @@ const adminRoute = (adminCollection) => {
   });
 
   // post api
-  router.post("/api/admin/insert-update-admin", async (req, res) => {
+  router.post("/api/admin/insert-update-admin", verifyJWT, async (req, res) => {
     const { _id, email, role, role_id, user_info } = req.body;
 
     const data = {
@@ -90,16 +95,20 @@ const adminRoute = (adminCollection) => {
   });
 
   // delete admin list
-  router.delete("/api/admin/delete-admin-list/:id", async (req, res) => {
-    const id = req.params.id;
-    const filter = { _id: new ObjectId(id) };
-    const result = await adminCollection.deleteOne(filter);
-    res.status(200).send({
-      message: "Admin delete successful",
-      deletedCount: result?.deletedCount,
-      status: 200,
-    });
-  });
+  router.delete(
+    "/api/admin/delete-admin-list/:id",
+    verifyJWT,
+    async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await adminCollection.deleteOne(filter);
+      res.status(200).send({
+        message: "Admin delete successful",
+        deletedCount: result?.deletedCount,
+        status: 200,
+      });
+    },
+  );
 
   return router;
 };

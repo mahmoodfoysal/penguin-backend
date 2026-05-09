@@ -1,41 +1,51 @@
 const express = require("express");
 const { ObjectId } = require("mongodb");
+const verifyJWT = require("../middlewares/jwtTokenVerify");
 const router = express.Router();
 
 const couponRoute = (couponCollection) => {
   // get api
-  router.get("/api/penguin/admin/get-coupon-list", async (req, res) => {
-    const getCouponList = couponCollection.find();
-    const result = await getCouponList.toArray();
-    res.send({
-      list_data: result,
-      message: "Successful",
-    });
-  });
-
-  // filter with email
-  router.get("/api/penguin/get-coupon-list/:email", async (req, res) => {
-    try {
-      const { email } = req.params;
-
-      const getCouponList = couponCollection.find({ email: email }); // filter here
+  router.get(
+    "/api/penguin/admin/get-coupon-list",
+    verifyJWT,
+    async (req, res) => {
+      const getCouponList = couponCollection.find();
       const result = await getCouponList.toArray();
-
       res.send({
         list_data: result,
         message: "Successful",
       });
-    } catch (error) {
-      res.status(500).send({
-        message: "Error fetching coupon list",
-        error: error.message,
-      });
-    }
-  });
+    },
+  );
+
+  // filter with email
+  router.get(
+    "/api/penguin/get-coupon-list/:email",
+    verifyJWT,
+    async (req, res) => {
+      try {
+        const { email } = req.params;
+
+        const getCouponList = couponCollection.find({ email: email }); // filter here
+        const result = await getCouponList.toArray();
+
+        res.send({
+          list_data: result,
+          message: "Successful",
+        });
+      } catch (error) {
+        res.status(500).send({
+          message: "Error fetching coupon list",
+          error: error.message,
+        });
+      }
+    },
+  );
 
   // check coupon is valid or not
   router.get(
     "/api/penguin/get-match-coupon-list/:email/:coupon_code",
+    verifyJWT,
     async (req, res) => {
       const email = req.params.email;
       const coupon_code = req.params.coupon_code;
@@ -61,6 +71,7 @@ const couponRoute = (couponCollection) => {
   //   post api
   router.post(
     "/api/penguin/admin/insert-update-coupon-list",
+    verifyJWT,
     async (req, res) => {
       const {
         _id,
@@ -124,6 +135,7 @@ const couponRoute = (couponCollection) => {
   // flag update
   router.patch(
     "/api/penguin/update-coupon-list/:id/:email",
+    verifyJWT,
     async (req, res) => {
       try {
         const id = req.params.id;
@@ -144,16 +156,20 @@ const couponRoute = (couponCollection) => {
   );
 
   // delete api
-  router.delete("/api/penguin/delete-coupon-list/:id", async (req, res) => {
-    const id = req.params.id;
-    const filter = { _id: new ObjectId(id) };
-    const result = await couponCollection.deleteOne(filter);
-    res.status(200).send({
-      status: 200,
-      message: "Successful",
-      deletedCount: result?.deletedCount,
-    });
-  });
+  router.delete(
+    "/api/penguin/delete-coupon-list/:id",
+    verifyJWT,
+    async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await couponCollection.deleteOne(filter);
+      res.status(200).send({
+        status: 200,
+        message: "Successful",
+        deletedCount: result?.deletedCount,
+      });
+    },
+  );
 
   return router;
 };

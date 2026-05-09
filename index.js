@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+// apply jwt token
+const jwt = require("jsonwebtoken");
+
 const { MongoClient, ServerApiVersion, Collection } = require("mongodb");
 require("dotenv").config();
 const bannerRoutes = require("./collections/banner.js");
@@ -108,6 +111,19 @@ async function run() {
     app.use("/", userRoute(userCollection));
 
     // ############################################ all collection route write here ###########################################
+
+    // jwt related api
+    app.post("/get-token", async (req, res) => {
+      const user = req.body;
+
+      const token = jwt.sign(user, process.env.JWT_SECRET, {
+        expiresIn: "10d",
+      });
+
+      res.send({
+        token,
+      });
+    });
   } finally {
     // await client.close();
   }
