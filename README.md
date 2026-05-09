@@ -21,6 +21,7 @@
 - All API have separate collection
 - Use mongoDB aggregation
 - Admin collection for admin control
+- Token validation by middleware
 
 ## Setup and Installation
 
