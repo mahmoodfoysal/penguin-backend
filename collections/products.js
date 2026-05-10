@@ -42,6 +42,7 @@ const productsRoute = (productsCollection) => {
         user_info,
         discount,
         status,
+        prod_more_image,
       } = req.body;
 
       const data = {
@@ -64,6 +65,11 @@ const productsRoute = (productsCollection) => {
         user_info: typeof user_info === "string" ? user_info : null,
         status: typeof status === "number" ? status : null,
         discount: typeof discount === "number" ? discount : null,
+        prod_more_image:
+          Array.isArray(prod_more_image) &&
+          prod_more_image.every((img) => typeof img === "string")
+            ? prod_more_image
+            : [],
       };
 
       if (

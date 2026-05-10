@@ -49,10 +49,10 @@ function bannerRoutes(bannerCollection) {
               .status(404)
               .send({ error: "No data modified", status: 404 });
           }
-          res.status(201).send({
+          res.status(200).send({
             message: "Update Successful",
             id: result.modifiedCount,
-            status: 201,
+            status: 200,
           });
         } else {
           const result = await bannerCollection.insertOne(data);
